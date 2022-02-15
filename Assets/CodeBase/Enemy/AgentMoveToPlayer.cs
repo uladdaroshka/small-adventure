@@ -16,36 +16,17 @@ namespace CodeBase.Enemy
     private Transform _heroTransform;
     private IGameFactory _gameFactory;
 
-    private void Start()
-    {
-      _gameFactory = AllServices.Container.Single<IGameFactory>();
+    private void Update() => 
+      SetDestinationForAgent();
 
-      if (_gameFactory.HeroGameObject != null)
-        InitializeHeroTransform();
-      else
-        _gameFactory.HeroCreated += HeroCreated;
-    }
+    public void Construct(Transform heroTransform) => 
+      _heroTransform = heroTransform;
 
-    private void Update()
+    private void SetDestinationForAgent()
     {
-      if(IsInitialized() && IsHeroNotReached())
+      if (IsHeroNotReached())
         Agent.destination = _heroTransform.position;
     }
-
-    private void OnDestroy()
-    {
-      if(_gameFactory != null)
-        _gameFactory.HeroCreated -= HeroCreated;
-    }
-
-    private bool IsInitialized() => 
-      _heroTransform != null;
-
-    private void HeroCreated() =>
-      InitializeHeroTransform();
-
-    private void InitializeHeroTransform() =>
-      _heroTransform = _gameFactory.HeroGameObject.transform;
 
     private bool IsHeroNotReached() => 
       Agent.transform.position.SqrMagnitudeTo(_heroTransform.position) >= MinimalDistance;

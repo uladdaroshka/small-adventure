@@ -1,4 +1,3 @@
-using System;
 using CodeBase.Data;
 using CodeBase.Enemy;
 using CodeBase.Infrastructure.Services;
