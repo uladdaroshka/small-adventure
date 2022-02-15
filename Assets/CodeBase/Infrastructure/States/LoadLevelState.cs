@@ -67,7 +67,7 @@ namespace CodeBase.Infrastructure.States
     {
       foreach (GameObject spawnerObject in GameObject.FindGameObjectsWithTag(EnemySpawnerTag))
       {
-        EnemySpawner spawner = spawnerObject.GetComponent<EnemySpawner>();
+        var spawner = spawnerObject.GetComponent<EnemySpawner>();
         _gameFactory.Register(spawner);
       }
     }

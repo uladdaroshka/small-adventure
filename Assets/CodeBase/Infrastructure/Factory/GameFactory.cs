@@ -1,31 +1,38 @@
 using System;
 using System.Collections.Generic;
+using CodeBase.Enemy;
 using CodeBase.Infrastructure.AssetManagement;
+using CodeBase.Infrastructure.Services;
 using CodeBase.Infrastructure.Services.PersistentProgress;
+using CodeBase.Logic;
+using CodeBase.StaticData;
+using CodeBase.UI;
 using UnityEngine;
+using UnityEngine.AI;
+using Object = UnityEngine.Object;
 
 namespace CodeBase.Infrastructure.Factory
 {
   public class GameFactory : IGameFactory
   {
     private readonly IAssetProvider _assets;
-    
+    private readonly IStaticDataService _staticDataService;
+
     public List<ISavedProgressReader> ProgressReaders { get; } = new List<ISavedProgressReader>();
     public List<ISavedProgress> ProgressWriters { get; } = new List<ISavedProgress>();
-    
-    public GameObject HeroGameObject { get; set; }
-    public event Action HeroCreated;
 
-    public GameFactory(IAssetProvider assets)
+    private GameObject _heroGameObject;
+
+    public GameFactory(IAssetProvider assets, IStaticDataService staticDataService) 
     {
+      _staticDataService = staticDataService;
       _assets = assets;
     }
 
     public GameObject CreateHero(GameObject at)
     {
-      HeroGameObject = InstantiateRegistered(AssetPath.HeroPath, at.transform.position);
-      HeroCreated?.Invoke();
-      return HeroGameObject;
+      _heroGameObject = InstantiateRegistered(AssetPath.HeroPath, at.transform.position);
+      return _heroGameObject;
     }
 
     public GameObject CreateHud() => 
@@ -37,14 +44,46 @@ namespace CodeBase.Infrastructure.Factory
       ProgressWriters.Clear();
     }
 
+    public void Register(ISavedProgressReader progressReader)
+    {
+      if(progressReader is ISavedProgress progressWriter)
+        ProgressWriters.Add(progressWriter);
+      
+      ProgressReaders.Add(progressReader);
+    }
+
+    public GameObject CreateMonster(MonsterTypeId monsterTypeId, Transform parent)
+    {
+      MonsterStaticData monsterData = _staticDataService.ForMonster(monsterTypeId);
+      GameObject monster = Object.Instantiate(monsterData.Prefab, parent.position, Quaternion.identity, parent);
+      
+      IHealth health = monster.GetComponent<IHealth>();
+      health.Current = monsterData.Hp;
+      health.Max = monsterData.Hp;
+
+      monster.GetComponent<ActorUI>().Construct(health);
+      monster.GetComponent<AgentMoveToPlayer>().Construct(_heroGameObject.transform);
+      monster.GetComponent<NavMeshAgent>().speed = monsterData.MoveSpeed;
+
+      Attack attack = monster.GetComponent<Attack>();
+      attack.Construct(_heroGameObject.transform);
+      attack.Damage = monsterData.Damage;
+      attack.Cleavage = monsterData.Cleavage;
+      attack.EffectiveDistance = monsterData.EffectiveDistance;
+
+      monster.GetComponent<RotateToHero>()?.Construct(_heroGameObject.transform);
+
+      return monster;
+    } 
+
     private GameObject InstantiateRegistered(string prefabPath, Vector3 at)
     {
       GameObject gameObject = _assets.Instantiate(path: prefabPath, at: at);
 
       RegisterProgressWatchers(gameObject);
       return gameObject;
-    } 
-    
+    }
+
     private GameObject InstantiateRegistered(string prefabPath)
     {
       GameObject gameObject = _assets.Instantiate(path: prefabPath);
@@ -59,14 +98,6 @@ namespace CodeBase.Infrastructure.Factory
       {
         Register(progressReader);
       }
-    }
-
-    public void Register(ISavedProgressReader progressReader)
-    {
-      if(progressReader is ISavedProgress progressWriter)
-        ProgressWriters.Add(progressWriter);
-      
-      ProgressReaders.Add(progressReader);
     }
   }
 }
