@@ -15,7 +15,6 @@ namespace CodeBase.Infrastructure.Factory
     List<ISavedProgress> ProgressWriters { get; }
     void Register(ISavedProgressReader progressReader);
     void Cleanup();
-    void Register(ISavedProgressReader savedProgress);
     GameObject CreateMonster(MonsterTypeId monsterTypeId, Transform parent);
   }
 }
