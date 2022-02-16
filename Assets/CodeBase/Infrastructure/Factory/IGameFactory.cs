@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CodeBase.Enemy;
 using CodeBase.Services;
 using CodeBase.Services.PersistentProgress;
 using CodeBase.StaticData;
@@ -15,5 +16,6 @@ namespace CodeBase.Infrastructure.Factory
     List<ISavedProgress> ProgressWriters { get; }
     void Cleanup();
     void Register(ISavedProgressReader savedProgress);
+    LootPiece CreateLoot();
   }
 }
