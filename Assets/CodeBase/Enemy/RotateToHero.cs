@@ -1,5 +1,5 @@
 using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.Services;
+using CodeBase.Services;
 using UnityEngine;
 
 namespace CodeBase.Enemy
@@ -10,13 +10,13 @@ namespace CodeBase.Enemy
 
     private Transform _heroTransform;
     private Vector3 _positionToLook;
-    
-    public void Construct(Transform heroTransform) => 
-      _heroTransform = heroTransform;
 
+    public void Construct(Transform heroTransform)
+      => _heroTransform = heroTransform;
+    
     private void Update()
     {
-      if (IsInitialized())
+      if (_heroTransform)
         RotateTowardsHero();
     }
 
@@ -41,8 +41,5 @@ namespace CodeBase.Enemy
 
     private float SpeedFactor() =>
       Speed * Time.deltaTime;
-
-    private bool IsInitialized() => 
-      _heroTransform != null;
   }
 }

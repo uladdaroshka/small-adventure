@@ -1,20 +1,21 @@
-using System;
 using System.Collections.Generic;
-using CodeBase.Infrastructure.Services;
-using CodeBase.Infrastructure.Services.PersistentProgress;
+using CodeBase.Enemy;
+using CodeBase.Services;
+using CodeBase.Services.PersistentProgress;
 using CodeBase.StaticData;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.Factory
 {
-  public interface IGameFactory:IService
+  public interface IGameFactory : IService
   {
     GameObject CreateHero(GameObject at);
     GameObject CreateHud();
+    GameObject CreateMonster(MonsterTypeId typeId, Transform parent);
     List<ISavedProgressReader> ProgressReaders { get; }
     List<ISavedProgress> ProgressWriters { get; }
-    void Register(ISavedProgressReader progressReader);
     void Cleanup();
-    GameObject CreateMonster(MonsterTypeId monsterTypeId, Transform parent);
+    void Register(ISavedProgressReader savedProgress);
+    LootPiece CreateLoot();
   }
 }
