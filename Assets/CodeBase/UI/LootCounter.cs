@@ -1,29 +1,24 @@
-using CodeBase.Data;
+﻿using CodeBase.Data;
 using TMPro;
 using UnityEngine;
 
 namespace CodeBase.UI
 {
-    public class LootCounter : MonoBehaviour
+  public class LootCounter : MonoBehaviour
+  {
+    public TextMeshProUGUI Counter;
+    private WorldData _worldData;
+
+    public void Construct(WorldData worldData)
     {
-        public TextMeshProUGUI CounterText;
-        
-        private WorldData _worldData;
-
-        public void Construct(WorldData worldData)
-        {
-            _worldData = worldData;
-            _worldData.LootData.Changed += UpdateCounter;
-        }
-
-        private void Start()
-        {
-            UpdateCounter();
-        }
-
-        private void UpdateCounter()
-        {
-            CounterText.text = $"{_worldData.LootData.Collected}";
-        }
+      _worldData = worldData;
+      _worldData.LootData.Changed += UpdateCounter;
     }
+
+    private void Start() => 
+      UpdateCounter();
+
+    private void UpdateCounter() => 
+      Counter.text = $"{_worldData.LootData.Collected}";
+  }
 }
