@@ -1,32 +1,32 @@
-using System.Linq;
+﻿using System.Linq;
 using CodeBase.Logic;
 using CodeBase.Logic.EnemySpawners;
-using CodeBase.Services.StaticData;
+using CodeBase.StaticData;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace CodeBase.Editor
 {
-    [CustomEditor(typeof(LevelStaticData))]
-    public class LevelStaticDataEditor : UnityEditor.Editor
+  [CustomEditor(typeof(LevelStaticData))]
+  public class LevelStaticDataEditor : UnityEditor.Editor
+  {
+    public override void OnInspectorGUI()
     {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
+      base.OnInspectorGUI();
 
-            LevelStaticData levelData = (LevelStaticData)target;
+      LevelStaticData levelData = (LevelStaticData) target;
 
-            if (GUILayout.Button("Collect"))
-            {
-                levelData.EnemySpawner = FindObjectsOfType<SpawnMarker>()
-                    .Select(x => new EnemySpawnerData(x.GetComponent<UniqueId>().Id, x.MonsterTypeId, x.transform.position))
-                    .ToList();
+      if (GUILayout.Button("Collect"))
+      {
+        levelData.EnemySpawners = FindObjectsOfType<SpawnMarker>()
+          .Select(x => new EnemySpawnerStaticData(x.GetComponent<UniqueId>().Id, x.MonsterTypeId, x.transform.position))
+          .ToList();
 
-                levelData.LevelKey = SceneManager.GetActiveScene().name;
-            }
-
-            EditorUtility.SetDirty(target);
-        }
+        levelData.LevelKey = SceneManager.GetActiveScene().name;
+      }
+      
+      EditorUtility.SetDirty(target);
     }
+  }
 }

@@ -1,4 +1,6 @@
-﻿using CodeBase.Infrastructure.AssetManagement;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.Infrastructure.Factory;
 using CodeBase.Services;
 using CodeBase.Services.Input;
@@ -47,7 +49,7 @@ namespace CodeBase.Infrastructure.States
     private void RegisterStaticDataService()
     {
       IStaticDataService staticData = new StaticDataService();
-      staticData.LoadMonsters();
+      staticData.Load();
       _services.RegisterSingle(staticData);
     }
 

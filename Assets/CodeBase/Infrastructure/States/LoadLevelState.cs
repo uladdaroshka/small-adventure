@@ -7,6 +7,7 @@ using CodeBase.Infrastructure.Factory;
 using CodeBase.Logic;
 using CodeBase.Services.PersistentProgress;
 using CodeBase.Services.StaticData;
+using CodeBase.StaticData;
 using CodeBase.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +17,6 @@ namespace CodeBase.Infrastructure.States
   public class LoadLevelState : IPayloadedState<string>
   {
     private const string InitialPointTag = "InitialPoint";
-    private const string EnemySpawnerTag = "EnemySpawner";
 
     private readonly GameStateMachine _stateMachine;
     private readonly SceneLoader _sceneLoader;
@@ -25,19 +25,14 @@ namespace CodeBase.Infrastructure.States
     private readonly IPersistentProgressService _progressService;
     private readonly IStaticDataService _staticData;
 
-    public LoadLevelState(GameStateMachine gameStateMachine
-      , SceneLoader sceneLoader
-      , LoadingCurtain loadingCurtain
-      , IGameFactory gameFactory
-      , IPersistentProgressService progressService
-      , IStaticDataService staticData)
+    public LoadLevelState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain, IGameFactory gameFactory, IPersistentProgressService progressService, IStaticDataService staticDataService)
     {
-      _staticData = staticData;
       _stateMachine = gameStateMachine;
       _sceneLoader = sceneLoader;
       _loadingCurtain = loadingCurtain;
       _gameFactory = gameFactory;
       _progressService = progressService;
+      _staticData = staticDataService;
     }
 
     public void Enter(string sceneName)
@@ -77,19 +72,19 @@ namespace CodeBase.Infrastructure.States
     {
       string sceneKey = SceneManager.GetActiveScene().name;
       LevelStaticData levelData = _staticData.ForLevel(sceneKey);
-
-      foreach (EnemySpawnerData spawner in levelData.EnemySpawner)
-      {
-        _gameFactory.CreateSpawner(spawner.Position, spawner.Id, spawner.MonsterTypeId);
-      }
+      
+      foreach (EnemySpawnerStaticData spawnerData in levelData.EnemySpawners)
+        _gameFactory.CreateSpawner(spawnerData.Id, spawnerData.Position, spawnerData.MonsterTypeId);
     }
 
     private void InitLootPieces()
     {
-      foreach (string key in _progressService.Progress.WorldData.LootData.LootPiecesOnScene.Dictionary.Keys)
+      foreach (KeyValuePair<string, LootPieceData> item in _progressService.Progress.WorldData.LootData.LootPiecesOnScene.Dictionary)
       {
         LootPiece lootPiece = _gameFactory.CreateLoot();
-        lootPiece.GetComponent<UniqueId>().Id = key;
+        lootPiece.GetComponent<UniqueId>().Id = item.Key;
+        lootPiece.Initialize(item.Value.Loot);
+        lootPiece.transform.position = item.Value.Position.AsUnityVector();
       }
     }
 

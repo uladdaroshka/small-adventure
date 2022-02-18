@@ -9,10 +9,12 @@ namespace CodeBase.Services.StaticData
   {
     private const string MonstersDataPath = "Static Data/Monsters";
     private const string LevelsDataPath = "Static Data/Levels";
+
     private Dictionary<MonsterTypeId, MonsterStaticData> _monsters;
     private Dictionary<string, LevelStaticData> _levels;
+    
 
-    public void LoadMonsters()
+    public void Load()
     {
       _monsters = Resources
         .LoadAll<MonsterStaticData>(MonstersDataPath)
@@ -28,7 +30,7 @@ namespace CodeBase.Services.StaticData
         ? staticData 
         : null;
 
-    public LevelStaticData ForLevel(string sceneKey) =>
+    public LevelStaticData ForLevel(string sceneKey) => 
       _levels.TryGetValue(sceneKey, out LevelStaticData staticData)
         ? staticData 
         : null;

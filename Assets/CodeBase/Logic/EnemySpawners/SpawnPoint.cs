@@ -11,15 +11,23 @@ namespace CodeBase.Logic.EnemySpawners
   public class SpawnPoint : MonoBehaviour, ISavedProgress
   {
     public MonsterTypeId MonsterTypeId;
+    
+    public string Id { get; set; }
 
     private IGameFactory _factory;
+    
     private EnemyDeath _enemyDeath;
 
-    public string Id { get; set; }
     private bool _slain;
 
     public void Construct(IGameFactory gameFactory) => 
       _factory = gameFactory;
+
+    private void OnDestroy()
+    {
+      if (_enemyDeath != null)
+        _enemyDeath.Happened -= Slay;
+    }
 
     public void LoadProgress(PlayerProgress progress)
     {

@@ -52,7 +52,7 @@ namespace CodeBase.Infrastructure.Factory
         .GetComponent<LootPiece>();
       
       lootPiece.Construct(_persistentProgressService.Progress.WorldData);
-      
+
       return lootPiece;
     }
 
@@ -84,6 +84,15 @@ namespace CodeBase.Infrastructure.Factory
       return monster;
     }
 
+    public void CreateSpawner(string spawnerId, Vector3 at, MonsterTypeId monsterTypeId)
+    {
+      SpawnPoint spawner = InstantiateRegistered(AssetPath.Spawner, at).GetComponent<SpawnPoint>();
+      
+      spawner.Construct(this);
+      spawner.MonsterTypeId = monsterTypeId;
+      spawner.Id = spawnerId;
+    }
+
     private void Register(ISavedProgressReader progressReader)
     {
       if (progressReader is ISavedProgress progressWriter)
@@ -96,17 +105,6 @@ namespace CodeBase.Infrastructure.Factory
     {
       ProgressReaders.Clear();
       ProgressWriters.Clear();
-    }
-
-    public void CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId)
-    {
-      SpawnPoint spawner = InstantiateRegistered(AssetPath.Spawner, at)
-        .GetComponent<SpawnPoint>();
-
-      spawner.Construct(this);
-
-      spawner.Id = spawnerId;
-      spawner.MonsterTypeId = monsterTypeId;
     }
 
     private GameObject InstantiateRegistered(string prefabPath, Vector3 at)
