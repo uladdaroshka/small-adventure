@@ -1,9 +1,7 @@
-using System;
-using CodeBase.Hero;
 using CodeBase.Logic;
 using UnityEngine;
 
-namespace CodeBase.UI
+namespace CodeBase.UI.Elements
 {
   public class ActorUI : MonoBehaviour
   {
@@ -31,10 +29,7 @@ namespace CodeBase.UI
         _health.HealthChanged -= UpdateHpBar;
     }
 
-    private void UpdateHpBar()
-    {
+    private void UpdateHpBar() => 
       HpBar.SetValue(_health.Current, _health.Max);
-    }
-
   }
 }
