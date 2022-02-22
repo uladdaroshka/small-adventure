@@ -9,6 +9,7 @@ using CodeBase.Services.StaticData;
 using CodeBase.StaticData;
 using CodeBase.UI;
 using CodeBase.UI.Elements;
+using CodeBase.UI.Services.Windows;
 using UnityEngine;
 using UnityEngine.AI;
 using Object = UnityEngine.Object;
@@ -24,10 +25,12 @@ namespace CodeBase.Infrastructure.Factory
     private readonly IStaticDataService _staticData;
     private readonly IRandomService _randomService;
     private readonly IPersistentProgressService _persistentProgressService;
+    private readonly IWindowService _windowService;
     private GameObject _heroGameObject;
 
-    public GameFactory(IAssetProvider assets, IStaticDataService staticData, IRandomService randomService, IPersistentProgressService persistentProgressService)
+    public GameFactory(IAssetProvider assets, IStaticDataService staticData, IRandomService randomService, IPersistentProgressService persistentProgressService, IWindowService windowService)
     {
+      _windowService = windowService;
       _assets = assets;
       _staticData = staticData;
       _randomService = randomService;
@@ -43,6 +46,11 @@ namespace CodeBase.Infrastructure.Factory
       
       hud.GetComponentInChildren<LootCounter>()
         .Construct(_persistentProgressService.Progress.WorldData);
+
+      foreach (var openWindowButton in hud.GetComponentsInChildren<OpenWindowButton>())
+      {
+        openWindowButton.Construct(_windowService);
+      }
       
       return hud;
     }
