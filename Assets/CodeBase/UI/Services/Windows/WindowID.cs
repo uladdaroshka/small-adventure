@@ -1,8 +1,8 @@
-namespace CodeBase.UI.Services.Windows
+﻿namespace CodeBase.UI.Services.Windows
 {
-    public enum WindowID
-    {
-        Unknown = 0,
-        Shop = 1,
-    }
+  public enum WindowId
+  {
+    None = 0,
+    Shop = 1,
+  }
 }

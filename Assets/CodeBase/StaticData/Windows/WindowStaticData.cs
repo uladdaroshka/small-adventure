@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace CodeBase.StaticData.Windows
 {
-    [CreateAssetMenu(fileName = "WindowStaticData", menuName = "Static Data/Window Static Data")]
-    public class WindowStaticData : ScriptableObject
-    {
-        public List<WindowConfig> Configs;
-    }
+  [CreateAssetMenu(menuName = "Static Data/Window static data", fileName = "WindowStaticData")]
+  public class WindowStaticData : ScriptableObject
+  {
+    public List<WindowConfig> Configs;
+  }
 }

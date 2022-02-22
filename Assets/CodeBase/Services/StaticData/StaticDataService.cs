@@ -11,11 +11,11 @@ namespace CodeBase.Services.StaticData
   {
     private const string MonstersDataPath = "Static Data/Monsters";
     private const string LevelsDataPath = "Static Data/Levels";
-    private const string WindowsStaticData = "Static Data/UI/WindowStaticData";
+    private const string StaticDataWindowPath = "Static Data/UI/WindowStaticData";
 
     private Dictionary<MonsterTypeId, MonsterStaticData> _monsters;
     private Dictionary<string, LevelStaticData> _levels;
-    private Dictionary<WindowID, WindowConfig> _windowConfigs;
+    private Dictionary<WindowId, WindowConfig> _windowConfigs;
 
 
     public void Load()
@@ -23,30 +23,30 @@ namespace CodeBase.Services.StaticData
       _monsters = Resources
         .LoadAll<MonsterStaticData>(MonstersDataPath)
         .ToDictionary(x => x.MonsterTypeId, x => x);
-      
+
       _levels = Resources
         .LoadAll<LevelStaticData>(LevelsDataPath)
         .ToDictionary(x => x.LevelKey, x => x);
-      
+
       _windowConfigs = Resources
-        .Load<WindowStaticData>(WindowsStaticData)
+        .Load<WindowStaticData>(StaticDataWindowPath)
         .Configs
-        .ToDictionary(x => x.WindowID, x => x);
+        .ToDictionary(x => x.WindowId, x => x);
     }
 
-    public MonsterStaticData ForMonster(MonsterTypeId typeId) => 
+    public MonsterStaticData ForMonster(MonsterTypeId typeId) =>
       _monsters.TryGetValue(typeId, out MonsterStaticData staticData)
-        ? staticData 
+        ? staticData
         : null;
 
-    public LevelStaticData ForLevel(string sceneKey) => 
+    public LevelStaticData ForLevel(string sceneKey) =>
       _levels.TryGetValue(sceneKey, out LevelStaticData staticData)
-        ? staticData 
+        ? staticData
         : null;
 
-    public WindowConfig ForWindow(WindowID windowID) => 
-    _windowConfigs.TryGetValue(windowID, out WindowConfig windowConfig)
-    ? windowConfig 
-    : null;
+    public WindowConfig ForWindow(WindowId windowId) =>
+      _windowConfigs.TryGetValue(windowId, out WindowConfig windowConfig)
+        ? windowConfig
+        : null;
   }
-} 
+}
